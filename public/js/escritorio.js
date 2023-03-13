@@ -33,8 +33,11 @@ socket.on('disconnect', () => {
 socket.on('disp-pending-tickets', (payload) => {
   if (payload === 0) {
     emptyQueueAlert.style.display = '';
+    queueCount.innerText = '';
+    btnServe.disabled = true;
   } else {
     emptyQueueAlert.style.display = 'none';
+    btnServe.disabled = false;
     queueCount.innerText = payload;
   }
 });
