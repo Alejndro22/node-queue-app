@@ -3,6 +3,7 @@ const lblDesktop = document.querySelector('h1');
 const btnServe = document.querySelector('button');
 const lblTicket = document.querySelector('small');
 const emptyQueueAlert = document.querySelector('.alert');
+const queueCount = document.querySelector('#lblPendientes');
 
 const searchParams = new URLSearchParams(window.location.search);
 
@@ -29,9 +30,13 @@ socket.on('disconnect', () => {
   btnServe.disabled = true;
 });
 
-socket.on('last-ticket', (payload) => {
-  // used to display last ticket for client
-  // lblNewTicket.innerText = 'Ticket ' + payload;
+socket.on('disp-pending-tickets', (payload) => {
+  if (payload === 0) {
+    emptyQueueAlert.style.display = '';
+  } else {
+    emptyQueueAlert.style.display = 'none';
+    queueCount.innerText = payload;
+  }
 });
 
 btnServe.addEventListener('click', () => {

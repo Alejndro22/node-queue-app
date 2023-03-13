@@ -4,6 +4,8 @@ const ticketControl = new TicketControl();
 
 const socketController = (socket) => {
   socket.emit('last-ticket', ticketControl.last);
+  socket.emit('actual-state', ticketControl.last4);
+  socket.emit('disp-pending-tickets', ticketControl.tickets.length);
 
   socket.on('create-ticket', (payload, callback) => {
     if (!callback) return;
@@ -12,6 +14,7 @@ const socketController = (socket) => {
     callback(nextTicket);
 
     // TODO: Notify there's a new ticket waiting to be assigned
+    socket.broadcast.emit('disp-pending-tickets', ticketControl.tickets.length);
   });
 
   // Here i receibe desktop and a callback from front
@@ -22,8 +25,9 @@ const socketController = (socket) => {
       return callback({ ok: false, msg: 'you have to send a desktop' });
 
     const ticket = ticketControl.serveTicket(desktop);
-
-    // TODO: Notify change in last 4
+    socket.broadcast.emit('actual-state', ticketControl.last4);
+    socket.emit('disp-pending-tickets', ticketControl.tickets.length);
+    socket.broadcast.emit('disp-pending-tickets', ticketControl.tickets.length);
 
     if (!ticket) {
       callback({ ok: false, msg: 'no more pending tickets' });
