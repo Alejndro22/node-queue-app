@@ -13,6 +13,24 @@ const socketController = (socket) => {
 
     // TODO: Notify there's a new ticket waiting to be assigned
   });
+
+  // Here i receibe desktop and a callback from front
+  socket.on('serve-ticket', ({ desktop }, callback) => {
+    if (!callback) return;
+
+    if (!desktop)
+      return callback({ ok: false, msg: 'you have to send a desktop' });
+
+    const ticket = ticketControl.serveTicket(desktop);
+
+    // TODO: Notify change in last 4
+
+    if (!ticket) {
+      callback({ ok: false, msg: 'no more pending tickets' });
+    } else {
+      callback({ ok: true, ticket });
+    }
+  });
 };
 
 export { socketController };
